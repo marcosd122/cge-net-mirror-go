@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <div className="bg-gov-blue py-12 md:py-24 text-white">
+    <div className="bg-gov-blue py-16 md:py-20 text-white">
       <div className="gov-container">
-        <div className="flex flex-col md:flex-row items-center">
-          <div className="flex-1 md:pr-8 mb-8 md:mb-0">
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="md:pr-8 mb-8 md:mb-0">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               CGENet - Portal de Transparência de Rondônia
             </h1>
@@ -31,13 +31,9 @@ const HeroSection = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-1 flex justify-center">
-            <div className="rounded-lg overflow-hidden shadow-xl bg-white p-4">
-              <img 
-                src="https://placehold.co/600x400/e6f2ff/0057b7?text=CGE-RO" 
-                alt="CGE Rondônia" 
-                className="w-full h-auto rounded" 
-              />
+          <div className="bg-white/95 p-12 rounded-lg shadow-lg">
+            <div className="text-gov-blue text-6xl md:text-8xl font-bold">
+              CGE-RO
             </div>
           </div>
         </div>
