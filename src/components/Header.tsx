@@ -3,9 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { format } from "date-fns";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const currentDate = format(new Date(), "dd/MM/yyyy");
 
   return (
     <header className="bg-gov-blue text-white shadow-md">
@@ -20,6 +22,11 @@ const Header = () => {
             <span className="ml-3 hidden md:inline-block text-sm">
               Portal de Transparência de Rondônia
             </span>
+          </div>
+          
+          {/* Current Date (Desktop) */}
+          <div className="hidden md:flex items-center mr-4">
+            <span className="text-sm font-medium">{currentDate}</span>
           </div>
           
           {/* Mobile Menu Button */}
@@ -46,6 +53,9 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-2 animate-fade-in">
             <nav className="flex flex-col space-y-2">
+              <div className="flex justify-between items-center py-2 px-4">
+                <span className="text-sm font-medium">{currentDate}</span>
+              </div>
               <Link to="/transparencia" className="py-2 px-4 hover:bg-gov-blue-dark rounded">Transparência</Link>
               <Link to="/servicos" className="py-2 px-4 hover:bg-gov-blue-dark rounded">Serviços</Link>
               <Link to="/login" className="py-2 px-4 bg-white text-gov-blue rounded text-center">Acessar</Link>

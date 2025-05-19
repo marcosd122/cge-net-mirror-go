@@ -4,21 +4,27 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAdmin } from "@/contexts/AdminContext";
 
 const LoginForm = () => {
   const [user, setUser] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const { setIsAdmin } = useAdmin();
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, this would call an authentication API
     
     if (user && password) {
-      toast.info("Função de login não implementada nesta versão de demonstração.", {
-        description: "Esta é uma versão de demonstração do portal CGENet.",
+      // For demo purposes, any login with both fields will work
+      toast.success("Login realizado com sucesso!", {
+        description: "Você agora tem acesso às funções administrativas.",
       });
+      setIsAdmin(true);
+      navigate('/');
     } else {
       toast.error("Por favor preencha todos os campos.", {
         description: "Usuário e senha são obrigatórios.",
