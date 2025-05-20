@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import ServiceCard from './ServiceCard';
 import EditableServiceCard from './EditableServiceCard';
@@ -147,10 +146,6 @@ const ServicesSection = () => {
             </Button>
           )}
         </div>
-        
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12 text-center">
-          O CGENet oferece uma série de serviços para facilitar o acesso à informação e promover a transparência na gestão pública do Estado de Rondônia.
-        </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => (

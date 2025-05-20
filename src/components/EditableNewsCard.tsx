@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface EditableNewsCardProps {
   id: number;
@@ -103,30 +103,32 @@ const EditableNewsCard: React.FC<EditableNewsCardProps> = ({
   if (isEditing) {
     return (
       <Card className="card-shadow overflow-hidden h-full flex flex-col">
-        <div className="relative h-48 w-full overflow-hidden">
-          <img 
-            src={editedImageUrl} 
-            alt={editedTitle} 
-            className="w-full h-full object-cover"
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
-            onClick={() => imageInputRef.current?.click()}
-          >
-            <Upload className="h-4 w-4" />
-            <span className="sr-only">Upload image</span>
-          </Button>
-          <input
-            type="file"
-            ref={imageInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+        <div className="w-full overflow-hidden">
+          <AspectRatio ratio={16/9} className="bg-muted">
+            <img 
+              src={editedImageUrl} 
+              alt={editedTitle} 
+              className="w-full h-full object-cover"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
+              onClick={() => imageInputRef.current?.click()}
+            >
+              <Upload className="h-4 w-4" />
+              <span className="sr-only">Upload image</span>
+            </Button>
+          </AspectRatio>
         </div>
+        <input
+          type="file"
+          ref={imageInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center mb-2">
             <Input 
@@ -234,20 +236,22 @@ const EditableNewsCard: React.FC<EditableNewsCardProps> = ({
 
   return (
     <Card className="card-shadow overflow-hidden h-full flex flex-col group">
-      <div className="relative h-48 w-full overflow-hidden">
-        <img 
-          src={imageUrl} 
-          alt={title} 
-          className="w-full h-full object-cover"
-        />
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="absolute top-2 right-2 bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => setIsEditing(true)}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+      <div className="relative w-full overflow-hidden">
+        <AspectRatio ratio={16/9} className="bg-muted">
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className="w-full h-full object-cover"
+          />
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="absolute top-2 right-2 bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => setIsEditing(true)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        </AspectRatio>
       </div>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center mb-2">

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface EditableServiceCardProps {
   id: number;
@@ -103,22 +103,24 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
       <Card className="card-shadow h-full flex flex-col">
         <CardHeader>
           {editedImageUrl ? (
-            <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
-              <img 
-                src={editedImageUrl} 
-                alt={editedTitle} 
-                className="w-full h-full object-cover"
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon"
-                className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
-                onClick={() => imageInputRef.current?.click()}
-              >
-                <Upload className="h-4 w-4" />
-                <span className="sr-only">Upload image</span>
-              </Button>
+            <div className="relative w-full mb-4 overflow-hidden rounded-md">
+              <AspectRatio ratio={16/9} className="bg-muted">
+                <img 
+                  src={editedImageUrl} 
+                  alt={editedTitle} 
+                  className="w-full h-full object-cover"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon"
+                  className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
+                  onClick={() => imageInputRef.current?.click()}
+                >
+                  <Upload className="h-4 w-4" />
+                  <span className="sr-only">Upload image</span>
+                </Button>
+              </AspectRatio>
             </div>
           ) : (
             <div className="flex flex-col items-center mb-4">
@@ -245,20 +247,22 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
     <Card className="card-shadow h-full flex flex-col group">
       <CardHeader>
         {imageUrl ? (
-          <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
-            <img 
-              src={imageUrl} 
-              alt={title} 
-              className="w-full h-full object-cover"
-            />
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="absolute top-2 right-2 bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => setIsEditing(true)}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
+          <div className="relative h-auto w-full mb-4 overflow-hidden rounded-md">
+            <AspectRatio ratio={16/9} className="bg-muted">
+              <img 
+                src={imageUrl} 
+                alt={title} 
+                className="w-full h-full object-cover"
+              />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="absolute top-2 right-2 bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => setIsEditing(true)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </AspectRatio>
           </div>
         ) : (
           <div className="relative flex justify-center mb-4 text-gov-blue">
