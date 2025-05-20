@@ -1,13 +1,26 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { format } from "date-fns";
+import { Menu, User, LogOut } from "lucide-react";
+import { format, isWeekend } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useAdmin } from '@/contexts/AdminContext';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const currentDate = format(new Date(), "dd/MM/yyyy");
+  const { isAdmin, setIsAdmin } = useAdmin();
+  const navigate = useNavigate();
+  
+  // Format date like "sábado, 17 de maio de 2025"
+  const currentDate = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  // Capitalize first letter
+  const formattedDate = currentDate.charAt(0).toUpperCase() + currentDate.slice(1);
+
+  const handleLogout = () => {
+    setIsAdmin(false);
+    navigate('/');
+  };
 
   return (
     <header className="bg-gov-blue text-white shadow-md">
@@ -26,7 +39,7 @@ const Header = () => {
           
           {/* Current Date (Desktop) */}
           <div className="hidden md:flex items-center mr-4">
-            <span className="text-sm font-medium">{currentDate}</span>
+            <span className="text-sm font-medium">{formattedDate}</span>
           </div>
           
           {/* Mobile Menu Button */}
@@ -41,11 +54,29 @@ const Header = () => {
             </Button>
           </div>
           
-          {/* Login Button */}
-          <div className="hidden md:block">
-            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-gov-blue">
-              <Link to="/login">Acessar</Link>
-            </Button>
+          {/* Login/User Button */}
+          <div className="hidden md:flex items-center gap-2">
+            {isAdmin ? (
+              <>
+                <div className="flex items-center gap-2 mr-2 bg-gov-blue-dark/50 py-1 px-3 rounded">
+                  <User className="h-4 w-4" />
+                  <span className="text-sm">Administrador</span>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-gov-blue flex items-center gap-2"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sair</span>
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-gov-blue">
+                <Link to="/login">Acessar</Link>
+              </Button>
+            )}
           </div>
         </div>
         
@@ -54,11 +85,28 @@ const Header = () => {
           <div className="md:hidden mt-4 pb-2 animate-fade-in">
             <nav className="flex flex-col space-y-2">
               <div className="flex justify-between items-center py-2 px-4">
-                <span className="text-sm font-medium">{currentDate}</span>
+                <span className="text-sm font-medium">{formattedDate}</span>
               </div>
               <Link to="/transparencia" className="py-2 px-4 hover:bg-gov-blue-dark rounded">Transparência</Link>
               <Link to="/servicos" className="py-2 px-4 hover:bg-gov-blue-dark rounded">Serviços</Link>
-              <Link to="/login" className="py-2 px-4 bg-white text-gov-blue rounded text-center">Acessar</Link>
+              {isAdmin ? (
+                <>
+                  <div className="flex items-center gap-2 py-2 px-4">
+                    <User className="h-4 w-4" />
+                    <span>Administrador</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="mx-4 bg-transparent border-white text-white hover:bg-white hover:text-gov-blue flex items-center justify-center gap-2"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sair</span>
+                  </Button>
+                </>
+              ) : (
+                <Link to="/login" className="py-2 px-4 bg-white text-gov-blue rounded text-center">Acessar</Link>
+              )}
             </nav>
           </div>
         )}

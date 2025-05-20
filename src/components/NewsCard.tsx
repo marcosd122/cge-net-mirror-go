@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface NewsCardProps {
   title: string;
@@ -23,12 +24,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
 }) => {
   return (
     <Card className="card-shadow overflow-hidden h-full flex flex-col">
-      <div className="relative h-48 w-full overflow-hidden">
-        <img 
-          src={imageUrl} 
-          alt={title} 
-          className="w-full h-full object-cover"
-        />
+      <div className="w-full overflow-hidden">
+        <AspectRatio ratio={16/9} className="bg-muted">
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className="w-full h-full object-cover"
+          />
+        </AspectRatio>
       </div>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center mb-2">

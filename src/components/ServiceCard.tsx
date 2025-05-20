@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface ServiceCardProps {
   title: string;
@@ -25,12 +26,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     <Card className="card-shadow h-full flex flex-col group">
       <CardHeader>
         {imageUrl ? (
-          <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
-            <img 
-              src={imageUrl} 
-              alt={title} 
-              className="w-full h-full object-cover"
-            />
+          <div className="relative w-full mb-4 overflow-hidden rounded-md">
+            <AspectRatio ratio={16/9} className="bg-muted">
+              <img 
+                src={imageUrl} 
+                alt={title} 
+                className="w-full h-full object-cover"
+              />
+            </AspectRatio>
           </div>
         ) : (
           <div className="flex justify-center mb-4 text-gov-blue">
