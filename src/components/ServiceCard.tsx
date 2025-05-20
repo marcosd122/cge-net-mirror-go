@@ -26,8 +26,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     <Card className="card-shadow h-full flex flex-col group">
       <CardHeader>
         {imageUrl ? (
-          <div className="relative w-full mb-4 overflow-hidden rounded-md">
-            <AspectRatio ratio={16/9} className="bg-muted">
+          <div className="w-full mb-4 overflow-hidden rounded-md">
+            <AspectRatio ratio={16/9}>
               <img 
                 src={imageUrl} 
                 alt={title} 

@@ -32,9 +32,6 @@ const Header = () => {
               <span className="text-2xl font-bold mr-2">CGE</span>
               <span className="text-2xl font-light">NET</span>
             </Link>
-            <span className="ml-3 hidden md:inline-block text-sm">
-              Portal de Transparência de Rondônia
-            </span>
           </div>
           
           {/* Current Date (Desktop) */}
