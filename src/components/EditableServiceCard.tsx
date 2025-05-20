@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { Edit, Save, X, Trash2, Link2 } from 'lucide-react';
+import { Edit, Save, X, Trash2, Link2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
@@ -44,6 +44,7 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
   const [editedImageUrl, setEditedImageUrl] = useState(imageUrl || '');
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
     defaultValues: {
@@ -86,6 +87,17 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
     toast.success("Link atualizado com sucesso!");
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setEditedImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (isEditing) {
     return (
       <Card className="card-shadow h-full flex flex-col">
@@ -97,19 +109,41 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
                 alt={editedTitle} 
                 className="w-full h-full object-cover"
               />
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <Upload className="h-4 w-4" />
+                <span className="sr-only">Upload image</span>
+              </Button>
             </div>
           ) : (
-            <div className="flex justify-center mb-4 text-gov-blue">
-              {icon}
+            <div className="flex flex-col items-center mb-4">
+              <div className="flex justify-center text-gov-blue mb-2">
+                {icon}
+              </div>
+              <Button
+                variant="outline" 
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <Upload className="h-4 w-4" />
+                <span>Adicionar imagem</span>
+              </Button>
             </div>
           )}
+          <input
+            type="file"
+            ref={imageInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
           <div className="space-y-2">
-            <Input 
-              value={editedImageUrl}
-              onChange={(e) => setEditedImageUrl(e.target.value)}
-              placeholder="URL da imagem (opcional)"
-              className="text-center"
-            />
             <Input 
               value={editedTitle} 
               onChange={(e) => setEditedTitle(e.target.value)}
@@ -139,7 +173,7 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
             className="w-full flex items-center justify-center gap-2"
           >
             <Link2 className="h-4 w-4" />
-            Editar Link: {editedLink}
+            Editar Link: {editedLink.substring(0, 30)}{editedLink.length > 30 ? '...' : ''}
           </Button>
           <div className="flex gap-2 w-full">
             <Button onClick={handleSave} variant="outline" className="flex-1">
@@ -217,28 +251,35 @@ const EditableServiceCard: React.FC<EditableServiceCardProps> = ({
               alt={title} 
               className="w-full h-full object-cover"
             />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="absolute top-2 right-2 bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setIsEditing(true)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
           </div>
         ) : (
-          <div className="flex justify-center mb-4 text-gov-blue">
+          <div className="relative flex justify-center mb-4 text-gov-blue">
             {icon}
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setIsEditing(true)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
           </div>
         )}
         <CardTitle className="text-center text-xl">{title}</CardTitle>
         <CardDescription className="text-center">{description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow relative">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => setIsEditing(true)}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-      </CardContent>
+      <CardContent className="flex-grow"></CardContent>
       <CardFooter>
         <Button asChild className="w-full bg-gov-blue hover:bg-gov-blue-dark">
-          <Link to={link}>{linkText}</Link>
+          <Link to={link} target="_blank" rel="noopener noreferrer">{linkText}</Link>
         </Button>
       </CardFooter>
     </Card>

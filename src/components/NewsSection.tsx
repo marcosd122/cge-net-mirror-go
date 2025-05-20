@@ -1,15 +1,23 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import NewsCard from './NewsCard';
 import EditableNewsCard from './EditableNewsCard';
 import { useAdmin } from '@/contexts/AdminContext';
-import { Plus } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useForm } from 'react-hook-form';
 
 const NewsSection = () => {
   const { isAdmin } = useAdmin();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string>('');
   
   // Sample news data with IDs added
   const [news, setNews] = useState([
@@ -42,25 +50,58 @@ const NewsSection = () => {
     }
   ]);
 
+  const form = useForm({
+    defaultValues: {
+      title: '',
+      summary: '',
+      date: new Date().toLocaleDateString('pt-BR'),
+      category: 'Geral',
+      link: '',
+    }
+  });
+
   const handleNewsUpdate = (id: number, data: any) => {
     setNews(news.map(item => 
       item.id === id ? { ...item, ...data } : item
     ));
   };
 
+  const handleDeleteNews = (id: number) => {
+    setNews(news.filter(item => item.id !== id));
+    toast.success("Notícia removida com sucesso!");
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddNews = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleSubmitNews = (data: any) => {
     const newId = Math.max(...news.map(item => item.id)) + 1;
     const newNews = {
       id: newId,
-      title: 'Nova Notícia',
-      summary: 'Descrição da nova notícia. Clique em editar para modificar este conteúdo.',
-      date: new Date().toLocaleDateString('pt-BR'),
-      category: 'Geral',
-      imageUrl: 'https://placehold.co/600x400/e6f2ff/0057b7?text=Nova+Notícia',
-      link: '/noticias/nova-noticia'
+      title: data.title,
+      summary: data.summary,
+      date: data.date,
+      category: data.category,
+      imageUrl: previewImage || 'https://placehold.co/600x400/e6f2ff/0057b7?text=Nova+Notícia',
+      link: data.link || '/noticias/nova-noticia'
     };
     setNews([...news, newNews]);
-    toast.success("Nova notícia adicionada. Agora você pode editar o conteúdo.");
+    setIsAddDialogOpen(false);
+    setPreviewImage('');
+    form.reset();
+    toast.success("Nova notícia adicionada com sucesso!");
   };
 
   return (
@@ -97,6 +138,7 @@ const NewsSection = () => {
                 imageUrl={item.imageUrl}
                 link={item.link}
                 onUpdate={handleNewsUpdate}
+                onDelete={handleDeleteNews}
               />
             ) : (
               <NewsCard
@@ -112,6 +154,135 @@ const NewsSection = () => {
           ))}
         </div>
       </div>
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Adicionar Nova Notícia</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmitNews)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categoria</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Categoria" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Data</FormLabel>
+                      <FormControl>
+                        <Input placeholder="DD/MM/YYYY" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Título</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Título da notícia" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="summary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Resumo</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Resumo da notícia" 
+                        className="min-h-[100px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormItem>
+                <FormLabel>Imagem</FormLabel>
+                <FormControl>
+                  <div className="flex flex-col items-center space-y-2">
+                    {previewImage && (
+                      <div className="w-full h-48 rounded-md overflow-hidden">
+                        <img 
+                          src={previewImage} 
+                          alt="Preview" 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => imageInputRef.current?.click()}
+                      className="w-full flex items-center justify-center gap-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {previewImage ? "Alterar imagem" : "Carregar imagem"}
+                    </Button>
+                    <input
+                      type="file"
+                      ref={imageInputRef}
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                </FormControl>
+              </FormItem>
+              
+              <FormField
+                control={form.control}
+                name="link"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link da Notícia</FormLabel>
+                    <FormControl>
+                      <Input placeholder="/noticias/pagina ou https://..." {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      O link será aberto em uma nova aba quando o usuário clicar em "Ler mais"
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setPreviewImage('');
+                  form.reset();
+                }}>
+                  Cancelar
+                </Button>
+                <Button type="submit">Adicionar Notícia</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

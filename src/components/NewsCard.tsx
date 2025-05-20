@@ -47,6 +47,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
       <CardFooter className="pt-2">
         <Link 
           to={link} 
+          target="_blank" 
+          rel="noopener noreferrer"
           className="text-gov-blue font-medium hover:text-gov-blue-dark hover:underline transition-colors"
         >
           Ler mais →

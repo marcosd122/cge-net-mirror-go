@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ServiceCard from './ServiceCard';
 import EditableServiceCard from './EditableServiceCard';
-import { FileText, Search, FileBarChart, Lock, Users, BookOpen, Plus, Image } from 'lucide-react';
+import { FileText, Search, FileBarChart, Lock, Users, BookOpen, Plus, Image, Upload } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -15,6 +15,8 @@ import { useForm } from 'react-hook-form';
 const ServicesSection = () => {
   const { isAdmin } = useAdmin();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string>('');
   
   const [services, setServices] = useState([
     {
@@ -85,7 +87,6 @@ const ServicesSection = () => {
       description: '',
       link: '',
       linkText: '',
-      imageUrl: '',
     }
   });
 
@@ -100,6 +101,17 @@ const ServicesSection = () => {
     toast.success("Serviço removido com sucesso!");
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddService = (data: any) => {
     const newId = Math.max(...services.map(service => service.id), 0) + 1;
     const newService = {
@@ -110,11 +122,12 @@ const ServicesSection = () => {
       iconType: 'Image',
       link: data.link || '/novo-servico',
       linkText: data.linkText || 'Acessar Serviço',
-      imageUrl: data.imageUrl || ''
+      imageUrl: previewImage || ''
     };
     
     setServices([...services, newService]);
     setIsAddDialogOpen(false);
+    setPreviewImage('');
     form.reset();
     toast.success("Novo serviço adicionado com sucesso!");
   };
@@ -207,21 +220,41 @@ const ServicesSection = () => {
                 )}
               />
               
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL da Imagem</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://exemplo.com/imagem.jpg" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Opcional. Se não fornecida, um ícone padrão será usado.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
+              <FormItem>
+                <FormLabel>Imagem</FormLabel>
+                <FormControl>
+                  <div className="flex flex-col items-center space-y-2">
+                    {previewImage && (
+                      <div className="w-full h-40 rounded-md overflow-hidden">
+                        <img 
+                          src={previewImage} 
+                          alt="Preview" 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => imageInputRef.current?.click()}
+                      className="w-full flex items-center justify-center gap-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {previewImage ? "Alterar imagem" : "Carregar imagem"}
+                    </Button>
+                    <input
+                      type="file"
+                      ref={imageInputRef}
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Opcional. Se não fornecida, um ícone padrão será usado.
+                </FormDescription>
+              </FormItem>
               
               <div className="grid grid-cols-2 gap-4">
                 <FormField
@@ -252,7 +285,11 @@ const ServicesSection = () => {
               </div>
               
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setPreviewImage('');
+                  form.reset();
+                }}>
                   Cancelar
                 </Button>
                 <Button type="submit">Adicionar Serviço</Button>

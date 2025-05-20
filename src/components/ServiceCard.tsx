@@ -22,7 +22,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   imageUrl
 }) => {
   return (
-    <Card className="card-shadow h-full flex flex-col">
+    <Card className="card-shadow h-full flex flex-col group">
       <CardHeader>
         {imageUrl ? (
           <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
@@ -43,7 +43,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <CardContent className="flex-grow"></CardContent>
       <CardFooter>
         <Button asChild className="w-full bg-gov-blue hover:bg-gov-blue-dark">
-          <Link to={link}>{linkText}</Link>
+          <Link to={link} target="_blank" rel="noopener noreferrer">{linkText}</Link>
         </Button>
       </CardFooter>
     </Card>
