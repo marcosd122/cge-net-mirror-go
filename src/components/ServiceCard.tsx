@@ -10,6 +10,7 @@ interface ServiceCardProps {
   icon: React.ReactNode;
   link: string;
   linkText: string;
+  imageUrl?: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -17,14 +18,25 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   description,
   icon,
   link,
-  linkText
+  linkText,
+  imageUrl
 }) => {
   return (
     <Card className="card-shadow h-full flex flex-col">
       <CardHeader>
-        <div className="flex justify-center mb-4 text-gov-blue">
-          {icon}
-        </div>
+        {imageUrl ? (
+          <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
+            <img 
+              src={imageUrl} 
+              alt={title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="flex justify-center mb-4 text-gov-blue">
+            {icon}
+          </div>
+        )}
         <CardTitle className="text-center text-xl">{title}</CardTitle>
         <CardDescription className="text-center">{description}</CardDescription>
       </CardHeader>
