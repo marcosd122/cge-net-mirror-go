@@ -31,6 +31,7 @@ const Footer = () => {
               <li><Link to="/servicos/documentos" className="hover:underline">Documentos</Link></li>
               <li><Link to="/contato" className="hover:underline">Fale Conosco</Link></li>
               <li><Link to="/acessibilidade" className="hover:underline">Acessibilidade</Link></li>
+              <li><Link to="/privacidade" className="hover:underline">Aviso de Privacidade</Link></li>
             </ul>
           </div>
           
